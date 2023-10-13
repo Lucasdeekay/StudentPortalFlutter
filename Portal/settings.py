@@ -134,3 +134,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS_ALLOWED_ORIGINS = [
 #     "http://localhost:3000",  # Replace with the address of your Flutter app
 # ]
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Security
+SECURE_SSL_REDIRECT = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
