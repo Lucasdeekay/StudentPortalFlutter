@@ -9,7 +9,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 class CourseMaterialAdmin(admin.ModelAdmin):
-    list_display = ("title", "url", "upload_date", "program")
+    list_display = ("title", "file", "upload_date", "program")
 
 
 class NotificationAdmin(admin.ModelAdmin):

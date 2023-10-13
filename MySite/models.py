@@ -30,7 +30,7 @@ class Student(models.Model):
 
 class CourseMaterial(models.Model):
     title = models.CharField(max_length=50, null=False, blank=False)
-    url = models.CharField(max_length=500, null=False, blank=False)
+    file = models.FileField(null=False, blank=False)
     upload_date = models.DateField(default=timezone.now().date(), null=False, blank=False)
     program = models.CharField(max_length=50, null=False, blank=False, choices=[
         ('Computer Science', 'Computer Science'),
@@ -60,7 +60,7 @@ class Notification(models.Model):
 
 
 class PaymentRecord(models.Model):
-    student = models.ForeignKey(Student, null=False, blank=False)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=False, blank=False)
     amount = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
     method = models.CharField(max_length=50, null=False, blank=False)
     transaction_id = models.CharField(max_length=500, null=False, blank=False)
