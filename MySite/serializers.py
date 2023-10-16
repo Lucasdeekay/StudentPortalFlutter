@@ -25,3 +25,7 @@ class PaymentRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentRecord
         fields = '__all__'
+
+
+class ProgramSerializer(serializers.Serializer):
+    program = serializers.CharField()
