@@ -7,6 +7,10 @@ from .models import Student, Notification, CourseMaterial
 from .serializers import StudentSerializer, NotificationSerializer
 from .serializers import ProgramSerializer
 from rest_framework.decorators import api_view
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import PaymentRecord
+from .serializers import PaymentRecordSerializer
 
 
 class StudentDetailsView(APIView):
@@ -20,15 +24,19 @@ class StudentDetailsView(APIView):
 
             if len(Notification.objects.all()) > 5:
                 # Get the last 5 notifications for the student
-                notifications = Notification.objects.all().order_by('time')[:5]
+                notifications = Notification.objects.all().order_by('-time')[:5]
             else:
                 # Get the last 5 notifications for the student
-                notifications = Notification.objects.all().order_by('time')
+                notifications = Notification.objects.all().order_by('-time')
             notification_serializer = NotificationSerializer(notifications, many=True)
+
+            payment_records = PaymentRecord.objects.filter(student=student).order_by("-time")
+            payment_serializer = PaymentRecordSerializer(payment_records, many=True)
 
             data = {
                 'student': student_serializer.data,
                 'notifications': notification_serializer.data,
+                'transactions': payment_serializer.data,
             }
 
             return Response(data, status=status.HTTP_200_OK)
@@ -66,3 +74,23 @@ def get_course_materials_by_program(request, program_name):
         return JsonResponse(material_data, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+class PaymentRecordView(generics.CreateAPIView):
+    queryset = PaymentRecord.objects.all()
+    serializer_class = PaymentRecordSerializer
+    permission_classes = [IsAuthenticated]  # Add the necessary permissions
+
+    def perform_create(self, serializer):
+        # Access the associated student
+        email = serializer.validated_data['email']
+
+        student = Student.objects.get(email=email)
+
+        # Customize the creation of the PaymentRecord instance
+        serializer.save(
+            student=student,
+            amount=serializer.validated_data['amount'],
+            method=serializer.validated_data['method'],
+            transaction_id=serializer.validated_data['transaction_id']
+        )
