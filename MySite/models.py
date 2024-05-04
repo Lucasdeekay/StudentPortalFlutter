@@ -1,6 +1,7 @@
 # models.py
 from django.db import models
 from django.utils import timezone
+from django.core.validators import URLValidator
 
 
 class Student(models.Model):
@@ -23,6 +24,7 @@ class Student(models.Model):
     ])
     level = models.CharField(max_length=3, null=False, blank=False)
     enrollment_date = models.DateField(default=timezone.now().date(), null=False, blank=False)
+    image = models.URLField(max_length=500, default='https://via.placeholder.com/150', validators=[URLValidator])
 
     def __str__(self):
         return self.matric_no
@@ -58,13 +60,26 @@ class Notification(models.Model):
     def __str__(self):
         return self.title
 
+    def time_passed(self):
+        return timezone.now() - self.time
+
 
 class PaymentRecord(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=False, blank=False)
     amount = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False)
+    description = models.CharField(max_length=50, null=False, blank=False)
     method = models.CharField(max_length=50, null=False, blank=False)
     transaction_id = models.CharField(max_length=500, null=False, blank=False)
     time = models.DateTimeField(default=timezone.now(), null=False, blank=False)
 
     def __str__(self):
         return self.transaction_id
+
+
+class Ticket(models.Model):
+    topic = models.CharField(max_length=50, null=False, blank=False)
+    content = models.TextField(null=False, blank=False)
+    email = models.EmailField(null=False, blank=False)
+
+    def __str__(self):
+        return self.topic

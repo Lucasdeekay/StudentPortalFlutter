@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from MySite.models import Student, CourseMaterial, Notification, PaymentRecord
+from MySite.models import Student, CourseMaterial, Notification, PaymentRecord, Ticket
 
 
 # Register your models here.
@@ -17,10 +17,15 @@ class NotificationAdmin(admin.ModelAdmin):
 
 
 class PaymentRecordAdmin(admin.ModelAdmin):
-    list_display = ("student", "amount", "method", "transaction_id", "time")
+    list_display = ("student", "amount", "description", "method", "transaction_id", "time")
+
+
+class TicketAdmin(admin.ModelAdmin):
+    list_display = ("topic", "content", "email")
 
 
 admin.site.register(Student, StudentAdmin)
 admin.site.register(CourseMaterial, CourseMaterialAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(PaymentRecord, PaymentRecordAdmin)
+admin.site.register(Ticket, TicketAdmin)

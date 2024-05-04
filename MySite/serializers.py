@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Student, CourseMaterial, Notification, PaymentRecord
+from .models import Student, CourseMaterial, Notification, PaymentRecord, Ticket
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -24,6 +24,12 @@ class NotificationSerializer(serializers.ModelSerializer):
 class PaymentRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentRecord
+        fields = '__all__'
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
         fields = '__all__'
 
 
