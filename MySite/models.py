@@ -24,7 +24,7 @@ class Student(models.Model):
     ])
     level = models.CharField(max_length=3, null=False, blank=False)
     enrollment_date = models.DateField(default=timezone.now().date(), null=False, blank=False)
-    image = models.URLField(max_length=500, default='https://via.placeholder.com/150', validators=[URLValidator])
+    image = models.ImageField(upload_to='profile_images/')
 
     def __str__(self):
         return self.matric_no

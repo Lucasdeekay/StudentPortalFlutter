@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from Portal import settings
 from Portal.settings import EMAIL_HOST_USER
@@ -82,9 +83,11 @@ class SubmitTicket(APIView):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+
+
 class ImageUpload(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
     def post(self, request, email, format=None):
         try:
             student = Student.objects.get(email=email)
@@ -94,10 +97,10 @@ class ImageUpload(APIView):
         # Handle image upload
         image = request.FILES.get('image')
         if image:
-            # Generate a unique filename
-            filename = f'student_{student.pk}_{image.name}'
+            # Generate a unique filename (optional, consider using model's pk)
+            filename = f'user_{student.pk}_{image.name}'
             # Define upload directory (replace with your desired location)
-            upload_dir = os.path.join(settings.MEDIA_ROOT, 'student_images')
+            upload_dir = os.path.join(settings.MEDIA_ROOT, 'profile_images')
             # Create upload directory if it doesn't exist
             os.makedirs(upload_dir, exist_ok=True)
             filepath = os.path.join(upload_dir, filename)
@@ -105,17 +108,12 @@ class ImageUpload(APIView):
                 for chunk in image.chunks():
                     destination.write(chunk)
 
-            # Update student image URL with the saved filename
+            # Update user_image with the saved filename
             student.image = filename
+            student.save()
+            return Response({'message': 'Image uploaded successfully'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'No image uploaded'}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = StudentSerializer(student, data=request.data, partial=True)  # Update only "image" field
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @api_view(['GET'])
